@@ -41,4 +41,6 @@ exports.jwtPassport = passport.use(
 );
 
 exports.verifyUser = passport.authenticate('jwt', {session: false});
+// Task 1 - Week 3
+exports.verifyAdmin = passport.authenticate('jwt', {session: false});
 
