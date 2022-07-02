@@ -5,16 +5,22 @@ const passport = require('passport');
 const authenticate = require('../authenticate');
 const userRouter = express.Router();
 
-/* GET users listing. */
+/* GET users listing. Task 3 - Week 3*/
 userRouter.route('/')
-.get((req, res, next) => {
-  User.find()
-  .then(users => {
-    res.statusCode = 200;
-    res.setHeader('Content-Type', 'application/json');
-    res.json(users);
-  })
-  .catch(err => next(err));
+.get(authenticate.verifyUser,(req, res, next) => {
+  if(req.user.admin) {  
+    User.find()
+    .then(users => {
+      res.statusCode = 200;
+      res.setHeader('Content-Type', 'application/json');
+      res.json(users);
+    })
+    .catch(err => next(err));
+  } else {
+    err = new Error('You are not authorized to perform this operation');
+    err.status = 403;
+    return next(err);
+  }
 });
 
 userRouter.route('/signup')

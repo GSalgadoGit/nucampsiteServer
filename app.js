@@ -12,7 +12,7 @@ const config = require('./config');
 const logger = require('morgan');
 
 const indexRouter = require('./routes/index');
-const usersRouter = require('./routes/users');
+const userRouter = require('./routes/users');
 const campsiteRouter = require('./routes/campsiteRouter');
 const promotionRouter = require('./routes/promotionRouter');
 const partnerRouter = require('./routes/partnerRouter');
@@ -46,7 +46,7 @@ app.use(express.urlencoded({ extended: false }));
 app.use(passport.initialize());
 
 app.use('/', indexRouter);
-app.use('/users', usersRouter);
+app.use('/users', userRouter);
 
 app.use(express.static(path.join(__dirname, 'public')));
 
