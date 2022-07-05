@@ -3,11 +3,13 @@ const express = require('express');
 const User = require('../models/user');
 const passport = require('passport');
 const authenticate = require('../authenticate');
+const cors = require('./cors');
 const userRouter = express.Router();
 
 /* GET users listing. Task 3 - Week 3*/
 userRouter.route('/')
-.get(authenticate.verifyUser,(req, res, next) => {
+.options(cors.corsWithOptions, (req, res) => res.sendStatus(200))
+.get(cors.corsWithOptions, authenticate.verifyUser,(req, res, next) => {
   if(req.user.admin) {  
     User.find()
     .then(users => {
@@ -24,7 +26,7 @@ userRouter.route('/')
 });
 
 userRouter.route('/signup')
-.post((req, res, next) => {
+.post(cors.corsWithOptions, (req, res, next) => {
   User.register(
     new User({username: req.body.username}),
     req.body.password,
@@ -59,7 +61,7 @@ userRouter.route('/signup')
 });
 
 userRouter.route('/login')
-.post(passport.authenticate('local'),(req, res) => {
+.post(cors.corsWithOptions, passport.authenticate('local'),(req, res) => {
     const token = authenticate.getToken({_id: req.user._id});
     res.statusCode = 200;
     res.setHeader('Content-Type', 'application/json');
@@ -67,7 +69,7 @@ userRouter.route('/login')
  });
 
  userRouter.route('/logout')
-.get((req, res, next) => {
+.get(cors.corsWithOptions, (req, res, next) => {
   if (req.session) {
       req.session.destroy();
       res.clearCookie('session-id');
