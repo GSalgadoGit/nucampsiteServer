@@ -34,7 +34,7 @@ uploadRouter.route('/')
     res.setHeader('Content-Type', 'application/json');
     res.json(req.file);
 })
-.putcors.corsWithOptions, (authenticate.verifyUser, authenticate.verifyAdmin, (req, res) => {
+.put(cors.corsWithOptions, authenticate.verifyUser, authenticate.verifyAdmin, (req, res) => {
     res.statusCode = 403;
     res.end('PUT operation not supported on /imageUpload');
 })

@@ -5,6 +5,7 @@ const passportLocalMongoose = require('passport-local-mongoose');
 
 // firstname & lastname added to use mongoose population
 const userSchema = new Schema({
+  facebookId: String,
   firstname: {
     type: String,
     default: ''
