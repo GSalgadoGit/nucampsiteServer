@@ -7,7 +7,8 @@ const favoriteRouter = express.Router();
 
 favoriteRouter.route('/')
 .options(cors.corsWithOptions, (req, res) => res.sendStatus(200))
-.get(cors.cors, (req, res, next) => {
+.get(cors.cors, authenticate.verifyUser, (req, res, next) => {
+  console.log('User ID ', req.user._id);
   Favorite.find({ user: req.user._id })
   .populate('user')
   .populate('campsites')
@@ -19,11 +20,14 @@ favoriteRouter.route('/')
   .catch(err => next(err));
 })
 .post(cors.corsWithOptions, authenticate.verifyUser, (req, res, next) => {
+  console.log('1 - User ID ', req.user._id);
   Favorite.findOne({user: req.user._id })
     .then(favorite => {
+      console.log('2 - User ID ', req.user._id);
       if (favorite) {
-        if(!favorite.campsites.includes(req.campsites._id)) {
-          favorite.campsites.push(req.campsites._id);
+        
+        if(!favorite.campsites.includes(req._id)) {
+          favorite.campsites.push(req._id);
           favorite.save()
           .then(favorite => {
             res.statusCode = 200;
@@ -31,14 +35,21 @@ favoriteRouter.route('/')
             res.json(favorite);
           })
         } else {
-            err = new Error(`Campsite ${req.campsites._id} already exists`);
+            err = new Error(`Campsite ${req._id} already exists`);
             err.status = 404;
             return next(err);
         }
       } else {
-          err = new Error(`Favorite ${req.user._id} not found`);
-          err.status = 404;
-          return next(err);
+        console.log('3 - User ID ', req.user._id);
+        req.body.user = req.user._id;
+        Favorite.create(req.body)
+        .then(favorite => {
+          console.log('Favorite created ', favorite);
+          res.statusCode = 200;
+          res.setHeader('Content-Type', 'application/json');
+          res.json(favorite);
+        })
+
       }
     })
     .catch(err => next(err));
